@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Consider implementing the following line -->
+    <!-- <meta name="viewport" content="initial-scale=1.0, user-scalable=no" /> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Josep's Map</title>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,500' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="search_bar">
+            <input type="text" class="filter">
+            <button type="submit">Filter</button>
+        </div>
+        <div class="list">
+            <ul data-bind="foreach: locationsList">
+                <li data-bind="text: $data.name"></li>
+            </ul>
+        </div>
+        <div class="map" id="map"></div>
+    </div>
+    <!-- JS Scripts -->
+    <script src='../bower_components/jquery/dist/jquery.min.js'></script>
+    <script src='../bower_components/bootstrap/dist/js/bootstrap.min.js'></script>
+    <script src='../bower_components/knockout/dist/knockout.js'></script>
+    <script src="https://maps.googleapis.com/maps/api/js"></script>
+    <script src='./js/all.js'></script> 
+</body>
+</html>
+
