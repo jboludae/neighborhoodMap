@@ -27,7 +27,7 @@ var locations = [
         'name': 'place 4',
         'location': {
             'lat': '43.261224',
-            'lng': '-2.939003'
+            'lng': '-2.935003'
         },
         'display': 'true'
     },
@@ -40,6 +40,25 @@ var locations = [
         'display': 'true'
     }
 ];
+
+
+var pins = {
+    default: {
+        pinImage : new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" +
+        'DD8888',
+        new google.maps.Size(21, 34),
+        new google.maps.Point(0,0),
+        new google.maps.Point(10, 34))
+    },
+    active: {
+        pinImage : new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" +
+        'AADDDD',
+        new google.maps.Size(21, 34),
+        new google.maps.Point(0,0),
+        new google.maps.Point(10, 34))
+
+    }
+};
 
 var neighborhoodMap = function(){
     this.mapDiv = document.getElementById('map');
@@ -73,15 +92,53 @@ var myViewModel = function(){
         for(var i = 0; i< self.locationsList().length; i++){
             var currentItem = self.locationsList()[i];
             if (currentItem.display() === true){
-                currentItem.marker = new google.maps.Marker({
-                    position: {lat: currentItem.lat, lng: currentItem.lng},
-                    map: self.myMap.map
-                });
+                self.addMarkerWithAnimation(currentItem, i*200);
+                // currentItem.marker = new google.maps.Marker({
+                //     position: {lat: currentItem.lat, lng: currentItem.lng},
+                //     animation: google.maps.Animation.DROP,
+                //     map: self.myMap.map
+                // });
+                // currentItem.marker.addListener('click', this.Bounce);
             } else if(currentItem.marker != null) {
                 currentItem.marker.setMap(null);
             }
         }
     };
+
+    self.addMarkerWithAnimation = function(currentItem, timeout){
+        window.setTimeout(function(){
+            currentItem.marker = new google.maps.Marker({
+                position: {lat: currentItem.lat, lng: currentItem.lng},
+                animation: google.maps.Animation.DROP,
+                icon: pins.default.pinImage,
+                map: self.myMap.map
+            });
+            currentItem.marker.addListener('click', self.animateMarker);
+        }, timeout);
+    };
+
+    self.Bounce = function(currentMarker){
+        // var self = this;
+        if (currentMarker.getAnimation() !== null) {
+            currentMarker.setAnimation(null);
+        } else {
+            currentMarker.setAnimation(google.maps.Animation.BOUNCE);
+            window.setTimeout(function(){
+                currentMarker.setAnimation(null);
+            },700);
+        }
+    };
+
+    self.toggleColor = function(currentMarker){
+        currentMarker.setIcon(pins.active.pinImage);
+    };
+
+    self.animateMarker = function(){
+        var currentMarker = this;
+        self.toggleColor(currentMarker);
+        self.Bounce(currentMarker);
+    };
+
     self.init();
 };
 
