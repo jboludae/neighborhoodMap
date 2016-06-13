@@ -1,6 +1,6 @@
 var locations = [
     {
-        'name': 'place 1',
+        'name': 'Grocery 2',
         'location': {
             'lat': '43.268224',
             'lng': '-2.938003'
@@ -8,7 +8,7 @@ var locations = [
         'display': 'true'
     },
     {
-        'name': 'place 2',
+        'name': 'panaderia 34',
         'location': {
             'lat': '43.269224',
             'lng': '-2.935003'
@@ -16,7 +16,7 @@ var locations = [
         'display': 'true'
     },
     {
-        'name': 'place 3',
+        'name': 'copisteria',
         'location': {
             'lat': '43.263224',
             'lng': '-2.937003'
@@ -24,15 +24,15 @@ var locations = [
         'display': 'true'
     },
     {
-        'name': 'place 4',
+        'name': 'Alpargatas Javier',
         'location': {
             'lat': '43.261224',
             'lng': '-2.935003'
         },
-        'display': 'true'
+        'display': 'false'
     },
     {
-        'name': 'place 5',
+        'name': 'Cocinas melon',
         'location': {
             'lat': '43.262224',
             'lng': '-2.932003'
@@ -76,29 +76,40 @@ var Location = function(data){
     this.lng = parseFloat(data['location']['lng']);
     this.display = ko.observable(data['display'] === 'true');
     this.marker = null;
+    this.active = false;
 };
 
 var myViewModel = function(){
     var self = this;
     self.locationsList = ko.observableArray([]);
     self.myMap = new neighborhoodMap();
+    self.currentFilter = ko.observable('');
+
+    var subscription = self.currentFilter.subscribe(function(newValue){
+        for (var i = 0; i<self.locationsList().length; i++){
+            var locationName = self.locationsList()[i].name.toLowerCase();
+            targetString = newValue.toLowerCase();
+            console.log(self.locationsList()[i].display());
+            if (locationName.indexOf(targetString) === -1){
+                self.locationsList()[i].display(false);
+            }else{
+                self.locationsList()[i].display(true);                
+            }
+        }
+    });
+
     self.init = function(){
         locations.forEach(function(locationItem){
             self.locationsList.push(new Location(locationItem));
         });
         self.drawMarkers();
     };
+    var a;
     self.drawMarkers = function(){
         for(var i = 0; i< self.locationsList().length; i++){
             var currentItem = self.locationsList()[i];
             if (currentItem.display() === true){
                 self.addMarkerWithAnimation(currentItem, i*200);
-                // currentItem.marker = new google.maps.Marker({
-                //     position: {lat: currentItem.lat, lng: currentItem.lng},
-                //     animation: google.maps.Animation.DROP,
-                //     map: self.myMap.map
-                // });
-                // currentItem.marker.addListener('click', this.Bounce);
             } else if(currentItem.marker != null) {
                 currentItem.marker.setMap(null);
             }

@@ -14,12 +14,11 @@
 <body>
     <div class="container">
         <div class="search_bar">
-            <input type="text" class="filter">
-            <button type="submit">Filter</button>
+            <input type="text" class="filter" placeholder="Search..." data-bind="textInput: currentFilter">
         </div>
         <div class="list">
             <ul data-bind="foreach: locationsList">
-                <li data-bind="text: $data.name"></li>
+                <li data-bind="text: $data.name, visible: $data.display() === true"></li>
             </ul>
         </div>
         <div class="map" id="map"></div>
