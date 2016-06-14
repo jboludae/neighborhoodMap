@@ -29,7 +29,7 @@ var locations = [
             'lat': '43.261224',
             'lng': '-2.935003'
         },
-        'display': 'false'
+        'display': 'true'
     },
     {
         'name': 'Cocinas melon',
@@ -89,13 +89,13 @@ var myViewModel = function(){
         for (var i = 0; i<self.locationsList().length; i++){
             var locationName = self.locationsList()[i].name.toLowerCase();
             targetString = newValue.toLowerCase();
-            console.log(self.locationsList()[i].display());
             if (locationName.indexOf(targetString) === -1){
                 self.locationsList()[i].display(false);
             }else{
                 self.locationsList()[i].display(true);                
             }
         }
+        self.drawMarkers();
     });
 
     self.init = function(){
@@ -104,14 +104,15 @@ var myViewModel = function(){
         });
         self.drawMarkers();
     };
-    var a;
+
     self.drawMarkers = function(){
         for(var i = 0; i< self.locationsList().length; i++){
             var currentItem = self.locationsList()[i];
             if (currentItem.display() === true){
                 self.addMarkerWithAnimation(currentItem, i*200);
-            } else if(currentItem.marker != null) {
+            } else if(currentItem.marker !== null) {
                 currentItem.marker.setMap(null);
+                console.log(currentItem.marker.map);
             }
         }
     };
