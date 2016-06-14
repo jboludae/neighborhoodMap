@@ -142,7 +142,13 @@ var myViewModel = function(){
                 icon: pins.default.pinImage,
                 map: self.myMap.map
             });
-            currentItem.marker.addListener('click', self.animateMarker);
+            currentItem.marker.addListener('click', function(){
+                self.inactiveAll();
+                currentItem.active(true);
+                var currentMarker = this;
+                self.activeColor(currentMarker);
+                self.Bounce(currentMarker);
+            });
         }, timeout);
     };
 
@@ -166,11 +172,12 @@ var myViewModel = function(){
         currentMarker.setIcon(pins.default.pinImage);
     };
 
-    self.animateMarker = function(){
-        var currentMarker = this;
-        self.defaultColorAll();
-        self.activeColor(currentMarker);
-        self.Bounce(currentMarker);
+    self.inactiveAll = function(){
+        for(var i = 0; i< self.locationsList().length; i++){
+            var currentItem = self.locationsList()[i];
+            currentItem.active(false);
+            self.defaultColor(currentItem.marker);
+        }
     };
 
     self.defaultColorAll = function(){
