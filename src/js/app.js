@@ -95,7 +95,8 @@ var myViewModel = function(){
                 self.locationsList()[i].display(true);                
             }
         }
-        self.drawMarkers();
+        // self.clearMarkers();
+        self.redrawMarkers();
     });
 
     self.init = function(){
@@ -112,8 +113,25 @@ var myViewModel = function(){
                 self.addMarkerWithAnimation(currentItem, i*200);
             } else if(currentItem.marker !== null) {
                 currentItem.marker.setMap(null);
-                console.log(currentItem.marker.map);
             }
+        }
+    };
+
+    self.redrawMarkers = function(){
+        for(var i = 0; i< self.locationsList().length; i++){
+            var currentItem = self.locationsList()[i];
+            if (currentItem.display() === true){
+                currentItem.marker.setMap(self.myMap.map);
+            } else if(currentItem.marker !== null) {
+                currentItem.marker.setMap(null);
+            }
+        }
+    };
+
+    self.clearMarkers = function(){
+        for(var i = 0; i< self.locationsList().length; i++){
+            var currentItem = self.locationsList()[i];
+            currentItem.marker.setMap(null);
         }
     };
 
