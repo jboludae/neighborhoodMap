@@ -144,13 +144,26 @@ var myViewModel = function(){
             });
             currentItem.marker.addListener('click', function(){
                 self.inactiveAll();
-                currentItem.active(true);
                 var currentMarker = this;
+                currentItem.active(true);
                 self.activeColor(currentMarker);
                 self.Bounce(currentMarker);
             });
         }, timeout);
     };
+
+    self.activateMarker = function(){
+        var marker = this.marker;
+        var location = this;
+        self.inactiveAll();
+        location.active(true);
+        self.activeColor(marker);
+        self.Bounce(marker);
+    };
+
+    self.findClickedMarker = function(){
+        console.log(this);
+    }
 
     self.Bounce = function(currentMarker){
         // var self = this;
