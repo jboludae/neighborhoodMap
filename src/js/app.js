@@ -76,7 +76,7 @@ var Location = function(data){
     this.lng = parseFloat(data['location']['lng']);
     this.display = ko.observable(data['display'] === 'true');
     this.marker = null;
-    this.active = false;
+    this.active = ko.observable(false);
 };
 
 var myViewModel = function(){
@@ -95,7 +95,6 @@ var myViewModel = function(){
                 self.locationsList()[i].display(true);                
             }
         }
-        // self.clearMarkers();
         self.redrawMarkers();
     });
 
@@ -159,14 +158,26 @@ var myViewModel = function(){
         }
     };
 
-    self.toggleColor = function(currentMarker){
+    self.activeColor = function(currentMarker){
         currentMarker.setIcon(pins.active.pinImage);
+    };
+
+    self.defaultColor = function(currentMarker){
+        currentMarker.setIcon(pins.default.pinImage);
     };
 
     self.animateMarker = function(){
         var currentMarker = this;
-        self.toggleColor(currentMarker);
+        self.defaultColorAll();
+        self.activeColor(currentMarker);
         self.Bounce(currentMarker);
+    };
+
+    self.defaultColorAll = function(){
+        for(var i = 0; i< self.locationsList().length; i++){
+            var currentItem = self.locationsList()[i];
+            self.defaultColor(currentItem.marker);
+        }
     };
 
     self.init();
