@@ -70,6 +70,7 @@ var neighborhoodMap = function(){
     });
 };
 
+
 var Location = function(data){
     this.name = data['name'];
     this.lat = parseFloat(data['location']['lat']);
@@ -84,6 +85,10 @@ var myViewModel = function(){
     self.locationsList = ko.observableArray([]);
     self.myMap = new neighborhoodMap();
     self.currentFilter = ko.observable('');
+
+    var infoWindow = new google.maps.InfoWindow({
+        content: "Josep"
+    });
 
     var subscription = self.currentFilter.subscribe(function(newValue){
         for (var i = 0; i<self.locationsList().length; i++){
@@ -148,6 +153,7 @@ var myViewModel = function(){
                 currentItem.active(true);
                 self.activeColor(currentMarker);
                 self.Bounce(currentMarker);
+                infoWindow.open(self.myMap, currentMarker);
             });
         }, timeout);
     };
@@ -159,6 +165,7 @@ var myViewModel = function(){
         location.active(true);
         self.activeColor(marker);
         self.Bounce(marker);
+        infoWindow.open(self.myMap, marker);
     };
 
     self.findClickedMarker = function(){
