@@ -90,6 +90,20 @@ var myViewModel = function(){
         content: "Josep"
     });
 
+
+    // ---------- TO DO: IMPLEMENT GOOGLE MAPS PLACES
+    self.service = new google.maps.places.PlacesService(self.myMap.map);
+    self.service.nearbySearch({
+        location: self.myMap.centerMap,
+        radius: 1000,
+        type: ['restaurant','bar']
+    }, self.processResults);
+
+    self.processResults = function(results,status){
+        console.log(results);
+    };
+    // ---------- TO DO: IMPLEMENT GOOGLE MAPS PLACES
+
     var subscription = self.currentFilter.subscribe(function(newValue){
         for (var i = 0; i<self.locationsList().length; i++){
             var locationName = self.locationsList()[i].name.toLowerCase();
