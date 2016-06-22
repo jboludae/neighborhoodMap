@@ -1,3 +1,4 @@
+function initiateView(){
 var locations = [
     {
         'name': 'Grocery 2',
@@ -50,7 +51,7 @@ function nonce_generate() {
     return (Math.floor(Math.random() * 1e12).toString());
 }
 
-var YELP_BASE_URL = 'https://api.yelp.com/v2/search';
+var YELP_BASE_URL = 'https://api.yelp.com/v2/search?';
 
 
 var yelp_url = YELP_BASE_URL;
@@ -63,9 +64,9 @@ var parameters = {
     oauth_signature_method: 'HMAC-SHA1',
     oauth_version : '1.0',
     callback: 'cb', // This is crucial to include for jsonp implementation in AJAX or else the oauth-signature will be wrong.
-    location: '1032+Castro+Street+Mountain+View',
-    term: 'cafe',
-    cll: '37.385083%2C-122.08460200000002'
+    location: 'Bilbao+Spain',
+    term: 'restaurant',
+    cll: '43.263224,C-2.935003'
 };
 
 var encodedSignature = oauthSignature.generate('GET',yelp_url, parameters, 'PUadcTDp_9c1DhRD7pkfpE7RDMk', 'otPGzZD-BxowNm7YylVzGVB1CiQ');
@@ -259,4 +260,14 @@ var myViewModel = function(){
 };
 
 
-ko.applyBindings(new myViewModel);
+    ko.applyBindings(new myViewModel);
+};
+
+function googleSuccess(){
+    initiateView();
+};
+
+function googleError(){
+    $('body').html('');
+    $('body').append("<h1>There was an error loading Google Maps. Please try again in 10 hours.</h1>");
+};
