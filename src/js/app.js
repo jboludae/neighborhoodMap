@@ -1,45 +1,94 @@
+function initiateView(){
 var locations = [
     {
-        'name': 'Grocery 2',
+        'name': 'El Globo',
         'location': {
-            'lat': '43.268224',
-            'lng': '-2.938003'
+            'lat': '43.2618436926003',
+            'lng': '-2.93262138916316'
         },
         'display': 'true'
     },
     {
-        'name': 'panaderia 34',
+        'name': 'Etxanobe',
         'location': {
-            'lat': '43.269224',
-            'lng': '-2.935003'
+            'lat': '43.2685509',
+            'lng': '-2.9353487'
         },
         'display': 'true'
     },
     {
-        'name': 'copisteria',
+        'name': 'Cafe Iruña',
         'location': {
-            'lat': '43.263224',
-            'lng': '-2.937003'
+            'lat': '43.2623711',
+            'lng': '-2.92803'
         },
         'display': 'true'
     },
     {
-        'name': 'Alpargatas Javier',
+        'name': 'Gure Toki',
         'location': {
-            'lat': '43.261224',
-            'lng': '-2.935003'
+            'lat': '43.2593858869925',
+            'lng': '-2.92238477945807'
         },
         'display': 'true'
     },
     {
-        'name': 'Cocinas melon',
+        'name': 'Sumo Bilbao',
         'location': {
-            'lat': '43.262224',
-            'lng': '-2.932003'
+            'lat': '43.262041',
+            'lng': '-2.927903'
         },
         'display': 'true'
     }
 ];
+
+// TO DO: INTEGRATE WITH YELP API
+/**
+ * Generates a random number and returns it as a string for OAuthentication
+ * @return {string}
+ */
+function nonce_generate() {
+    return (Math.floor(Math.random() * 1e12).toString());
+}
+
+var YELP_BASE_URL = 'https://api.yelp.com/v2/search?';
+
+
+var yelp_url = YELP_BASE_URL;
+
+var parameters = {
+    oauth_consumer_key: 'S8-8TiaPScmVwStuR1GA_Q',
+    oauth_token: 'UoA7m1851yaOsFzsbBgQOliMDGSer_Gs',
+    oauth_nonce: nonce_generate(),
+    oauth_timestamp: Math.floor(Date.now()/1000),
+    oauth_signature_method: 'HMAC-SHA1',
+    oauth_version : '1.0',
+    callback: 'cb', // This is crucial to include for jsonp implementation in AJAX or else the oauth-signature will be wrong.
+    location: 'Bilbao+Spain',
+    term: 'cafe iruna',
+    cll: '43.263224,C-2.935003'
+};
+
+var encodedSignature = oauthSignature.generate('GET',yelp_url, parameters, 'PUadcTDp_9c1DhRD7pkfpE7RDMk', 'otPGzZD-BxowNm7YylVzGVB1CiQ');
+parameters.oauth_signature = encodedSignature;
+
+var settings = {
+    url: yelp_url,
+    data: parameters,
+    cache: true,                // This is crucial to include as well to prevent jQuery from adding on a cache-buster parameter "_=23489489749837", invalidating our oauth-signature
+    dataType: 'jsonp',
+    success: function(results) {
+      console.log(results);
+    },
+    fail: function() {
+      console.log('failed!!');
+    }
+};
+
+// Send AJAX query via jQuery library.
+$.ajax(settings);
+
+// *******************************
 
 
 var pins = {
@@ -221,8 +270,19 @@ var myViewModel = function(){
         }
     };
 
+
     self.init();
 };
 
 
-ko.applyBindings(new myViewModel);
+    ko.applyBindings(new myViewModel);
+};
+
+function googleSuccess(){
+    initiateView();
+};
+
+function googleError(){
+    $('body').html('');
+    $('body').append("<h1>There was an error loading Google Maps. Please try again in 10 hours.</h1>");
+};
