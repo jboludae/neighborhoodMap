@@ -256,6 +256,7 @@ var myViewModel = function(){
         }
     };
 
+
     self.init();
 };
 
