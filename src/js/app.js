@@ -1,42 +1,42 @@
 function initiateView(){
 var locations = [
     {
-        'name': 'Grocery 2',
+        'name': 'El Globo',
         'location': {
-            'lat': '43.268224',
-            'lng': '-2.938003'
+            'lat': '43.2618436926003',
+            'lng': '-2.93262138916316'
         },
         'display': 'true'
     },
     {
-        'name': 'panaderia 34',
+        'name': 'Etxanobe',
         'location': {
-            'lat': '43.269224',
-            'lng': '-2.935003'
+            'lat': '43.2685509',
+            'lng': '-2.9353487'
         },
         'display': 'true'
     },
     {
-        'name': 'copisteria',
+        'name': 'Cafe Iruña',
         'location': {
-            'lat': '43.263224',
-            'lng': '-2.937003'
+            'lat': '43.2623711',
+            'lng': '-2.92803'
         },
         'display': 'true'
     },
     {
-        'name': 'Alpargatas Javier',
+        'name': 'Gure Toki',
         'location': {
-            'lat': '43.261224',
-            'lng': '-2.935003'
+            'lat': '43.2593858869925',
+            'lng': '-2.92238477945807'
         },
         'display': 'true'
     },
     {
-        'name': 'Cocinas melon',
+        'name': 'Sumo Bilbao',
         'location': {
-            'lat': '43.262224',
-            'lng': '-2.932003'
+            'lat': '43.262041',
+            'lng': '-2.927903'
         },
         'display': 'true'
     }
@@ -65,7 +65,7 @@ var parameters = {
     oauth_version : '1.0',
     callback: 'cb', // This is crucial to include for jsonp implementation in AJAX or else the oauth-signature will be wrong.
     location: 'Bilbao+Spain',
-    term: 'restaurant',
+    term: 'cafe iruna',
     cll: '43.263224,C-2.935003'
 };
 
