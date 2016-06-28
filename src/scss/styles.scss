@@ -1,6 +1,10 @@
 body {
     font-family: Roboto, sans-serif;
 }
+.container{
+    float: left;
+    width: 250px;
+}
 
 #map {
     position: absolute;
