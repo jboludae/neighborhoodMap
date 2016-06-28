@@ -33,6 +33,13 @@ function initiateView(){
         this.name = data.name;
         this.lat = parseFloat(data.location.coordinate.latitude);
         this.lng = parseFloat(data.location.coordinate.longitude);
+        this.address = data.location.address.join(" ");
+        this.phone = data.display_phone;
+        this.city = data.location.city;
+        this.postal_code = data.location.postal_code;
+        this.yelp_rating = data.rating;
+        this.review_count = data.review_count;
+        this.rating_img_url = data.rating_img_url;
         this.display = ko.observable(true);
         this.marker = null;
         this.active = ko.observable(false);
@@ -176,6 +183,30 @@ function initiateView(){
                 });
             }, timeout);
         };
+
+        self.prepareContent = function(location){
+            var streetViewString = "<iframe width='300' height='300' frameborder='0' src='https://www.google.com/maps/embed/v1/streetview?key=AIzaSyDpH8QVW2DZa0D9E251zhSIbLDmDzWB4k4&location=46.414382,10.013988&heading=210&pitch=10&fov=35'></iframe>";
+            var contentString = "<div class='infoWin'>" +
+                                    "<div class='textContent'>" +
+                                        "<h5 class='infoTitle'>"+
+                                            location.name +
+                                        "</h5>" +
+                                        "<ul class='infoData'>"+
+                                            "<li> Tel. "+location.phone+"</li>"+
+                                            "<li>"+location.address+"</li>"+
+                                            "<li>"+location.postal_code+" "+location.city+"</li>"+
+                                        "</ul>"+
+                                    "</div>"+
+                                    "<div class='imageContent'>"+
+                                        "<img src='"+location.rating_img_url +"' alt='yelp star rating'>"+
+                                        "<span class='reviewCount'> "+location.review_count+" Yelp reviews</span>"+
+                                        streetViewString +
+                                    "</div>"+
+                                "</div>";
+            infoWindow.setContent(contentString);
+        };
+
+
         self.activateMarker = function(){
             var marker = this.marker;
             var location = this;
@@ -183,7 +214,8 @@ function initiateView(){
             location.active(true);
             self.activeColor(marker);
             self.Bounce(marker);
-            infoWindow.setContent(location.name);
+            self.prepareContent(location);
+            // infoWindow.setContent(location.name);
             infoWindow.open(self.myMap, marker);
         };
 
