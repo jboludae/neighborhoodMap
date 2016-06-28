@@ -49,55 +49,55 @@ function initiateView(){
         });
 
             // TO DO: INTEGRATE WITH YELP API
-    /**
-     * Generates a random number and returns it as a string for OAuthentication
-     * @return {string}
-     */
-    function nonce_generate() {
-        return (Math.floor(Math.random() * 1e12).toString());
-    }
-
-    var YELP_BASE_URL = 'https://api.yelp.com/v2/search?';
-
-
-    var yelp_url = YELP_BASE_URL;
-
-    var parameters = {
-        oauth_consumer_key: 'S8-8TiaPScmVwStuR1GA_Q',
-        oauth_token: 'UoA7m1851yaOsFzsbBgQOliMDGSer_Gs',
-        oauth_nonce: nonce_generate(),
-        oauth_timestamp: Math.floor(Date.now()/1000),
-        oauth_signature_method: 'HMAC-SHA1',
-        oauth_version : '1.0',
-        callback: 'cb', // This is crucial to include for jsonp implementation in AJAX or else the oauth-signature will be wrong.
-        location: 'Bilbao+Spain',
-        term: 'restaurant',
-        limit: 20,
-        sort: 2,
-        cll: '43.263224,C-2.935003'
-    };
-
-    var encodedSignature = oauthSignature.generate('GET',yelp_url, parameters, 'PUadcTDp_9c1DhRD7pkfpE7RDMk', 'otPGzZD-BxowNm7YylVzGVB1CiQ');
-    parameters.oauth_signature = encodedSignature;
-
-    var settings = {
-        url: yelp_url,
-        data: parameters,
-        cache: true,                // This is crucial to include as well to prevent jQuery from adding on a cache-buster parameter "_=23489489749837", invalidating our oauth-signature
-        dataType: 'jsonp',
-        success: function(results) {
-          yelp_locations = results.businesses;
-          self.init();
-        },
-        fail: function() {
-          console.log('failed!!');
+        /**
+         * Generates a random number and returns it as a string for OAuthentication
+         * @return {string}
+         */
+        function nonce_generate() {
+            return (Math.floor(Math.random() * 1e12).toString());
         }
-    };
 
-    // Send AJAX query via jQuery library.
-    $.ajax(settings);
+        var YELP_BASE_URL = 'https://api.yelp.com/v2/search?';
 
-    // *******************************
+
+        var yelp_url = YELP_BASE_URL;
+
+        var parameters = {
+            oauth_consumer_key: 'S8-8TiaPScmVwStuR1GA_Q',
+            oauth_token: 'UoA7m1851yaOsFzsbBgQOliMDGSer_Gs',
+            oauth_nonce: nonce_generate(),
+            oauth_timestamp: Math.floor(Date.now()/1000),
+            oauth_signature_method: 'HMAC-SHA1',
+            oauth_version : '1.0',
+            callback: 'cb', // This is crucial to include for jsonp implementation in AJAX or else the oauth-signature will be wrong.
+            location: 'Bilbao+Spain',
+            term: 'restaurant',
+            limit: 20,
+            sort: 2,
+            cll: '43.263224,C-2.935003'
+        };
+
+        var encodedSignature = oauthSignature.generate('GET',yelp_url, parameters, 'PUadcTDp_9c1DhRD7pkfpE7RDMk', 'otPGzZD-BxowNm7YylVzGVB1CiQ');
+        parameters.oauth_signature = encodedSignature;
+
+        var settings = {
+            url: yelp_url,
+            data: parameters,
+            cache: true,                // This is crucial to include as well to prevent jQuery from adding on a cache-buster parameter "_=23489489749837", invalidating our oauth-signature
+            dataType: 'jsonp',
+            success: function(results) {
+              yelp_locations = results.businesses;
+              self.init();
+            },
+            fail: function() {
+              console.log('failed!!');
+            }
+        };
+
+        // Send AJAX query via jQuery library.
+        $.ajax(settings);
+
+        // *******************************
 
 
         // ---------- TO DO: IMPLEMENT GOOGLE MAPS PLACES
@@ -172,16 +172,10 @@ function initiateView(){
                     map: self.myMap.map
                 });
                 currentItem.marker.addListener('click', function(){
-                    self.inactiveAll();
-                    var currentMarker = this;
-                    currentItem.active(true);
-                    self.activeColor(currentMarker);
-                    self.Bounce(currentMarker);
-                    infoWindow.open(self.myMap, currentMarker);
+                    self.activateMarker.call(currentItem);
                 });
             }, timeout);
         };
-
         self.activateMarker = function(){
             var marker = this.marker;
             var location = this;
@@ -189,8 +183,10 @@ function initiateView(){
             location.active(true);
             self.activeColor(marker);
             self.Bounce(marker);
+            infoWindow.setContent(location.name);
             infoWindow.open(self.myMap, marker);
         };
+
 
         self.findClickedMarker = function(){
             console.log(this);
@@ -244,3 +240,6 @@ function googleError(){
     $('body').html('');
     $('body').append("<h1>There was an error loading Google Maps. Please try again in 10 hours.</h1>");
 };
+
+
+        
