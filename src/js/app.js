@@ -51,11 +51,9 @@ function initiateView(){
         self.myMap = new neighborhoodMap();
         self.currentFilter = ko.observable('');
 
-        var infoWindow = new google.maps.InfoWindow({
-            content: "<h3>Josep</h3>"
-        });
+        var infoWindow = new google.maps.InfoWindow();
 
-            // TO DO: INTEGRATE WITH YELP API
+        // TO DO: INTEGRATE WITH YELP API
         /**
          * Generates a random number and returns it as a string for OAuthentication
          * @return {string}
@@ -105,19 +103,38 @@ function initiateView(){
         $.ajax(settings);
 
         // *******************************
-
-
         // ---------- TO DO: IMPLEMENT GOOGLE MAPS PLACES
-        self.service = new google.maps.places.PlacesService(self.myMap.map);
-        self.processResults = function(results,status){
-            // console.log(results);
-        };
-        self.service.nearbySearch({
-            location: self.myMap.centerMap,
-            radius: 2000,
-            type: ['cafe']
-        }, self.processResults);
+        self.printConsole = function(place, status){
+            // console.log(place);
+        }
 
+        self.service = new google.maps.places.PlacesService(self.myMap.map);
+        
+        self.retrievePlacesDetails = function(results,status, location){
+            var request = {
+                placeId: results[0].place_id
+            };
+            self.service.getDetails(request,function(result,status){
+                location.place_id = result.place_id;
+                location.photos_array = result.photos;
+                location.first_picture_url = result.photos[0].getUrl({'maxHeight': 300, 'maxWidth': 300});
+                location.website = result.website;
+                location.rating = result.rating;
+                console.log(result);
+                self.prepareInfoWindowContent(location);
+            });
+        };
+
+        self.retrieveInfoGooglePlaces = function(location){
+            self.service.nearbySearch({
+                location: self.myMap.centerMap,
+                radius: 2000,
+                keyword: location.name
+            }, function(result, status){
+                self.retrievePlacesDetails(result, status, location);
+            });
+
+        };
 
         // ---------- TO DO: IMPLEMENT GOOGLE MAPS PLACES
 
@@ -184,9 +201,16 @@ function initiateView(){
             }, timeout);
         };
 
-        self.prepareContent = function(location){
-            var streetViewString = "<iframe width='300' height='300' frameborder='0' src='https://www.google.com/maps/embed/v1/streetview?key=AIzaSyDpH8QVW2DZa0D9E251zhSIbLDmDzWB4k4&location=46.414382,10.013988&heading=210&pitch=10&fov=35'></iframe>";
+        self.initContent = function(location){
+            self.retrieveInfoGooglePlaces(location);
+        };
+
+        self.prepareInfoWindowContent = function(location){
+            var pictureString = "<iframe width='300' height='auto' frameborder='0' src='"+location.first_picture_url+"'></iframe>";
             var contentString = "<div class='infoWin'>" +
+                                    "<div class='imageContent'>"+
+                                        pictureString +
+                                    "</div>"+
                                     "<div class='textContent'>" +
                                         "<h5 class='infoTitle'>"+
                                             location.name +
@@ -195,13 +219,13 @@ function initiateView(){
                                             "<li> Tel. "+location.phone+"</li>"+
                                             "<li>"+location.address+"</li>"+
                                             "<li>"+location.postal_code+" "+location.city+"</li>"+
+                                            "<li>"+"<a href='"+location.website+"' target='_blank'>"+location.website+"</a></li>"+
                                         "</ul>"+
                                     "</div>"+
-                                    "<div class='imageContent'>"+
+                                    "<div class='ratingsContent'>"+
                                         "<img src='"+location.rating_img_url +"' alt='yelp star rating'>"+
-                                        "<span class='reviewCount'> "+location.review_count+" Yelp reviews</span>"+
-                                        streetViewString +
-                                    "</div>"+
+                                        "<span class='reviewCount'> "+location.review_count+" Yelp reviews</span>"+                                    "</div>"+
+
                                 "</div>";
             infoWindow.setContent(contentString);
         };
@@ -214,7 +238,7 @@ function initiateView(){
             location.active(true);
             self.activeColor(marker);
             self.Bounce(marker);
-            self.prepareContent(location);
+            self.initContent(location);
             // infoWindow.setContent(location.name);
             infoWindow.open(self.myMap, marker);
         };
