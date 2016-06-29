@@ -1,9 +1,13 @@
 body {
     font-family: Roboto, sans-serif;
 }
+input {
+    width: 220px;
+}
 .container{
-    float: left;
+    float: right;
     width: 250px;
+    padding: 15px;
 }
 
 #map {
@@ -24,10 +28,13 @@ body {
     li:hover{
         background-color: rgba(0,0,0, 0.15);
     }
+    ul{
+        padding: 10px;
+    }
 }
 
 .selected{
-    color: green;
+    background-color: rgba(0,0,0, 0.30);
     font-weight: bold;
 }
 
