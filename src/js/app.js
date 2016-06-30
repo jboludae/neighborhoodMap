@@ -77,7 +77,7 @@ function initiateView(){
             location: 'Bilbao+Spain',
             term: 'restaurant',
             limit: 20,
-            sort: 2,
+            sort: 1,
             cll: '43.263224,C-2.935003'
         };
         var encodedSignature = oauthSignature.generate('GET',yelp_url, parameters, 'PUadcTDp_9c1DhRD7pkfpE7RDMk', 'otPGzZD-BxowNm7YylVzGVB1CiQ');
@@ -153,8 +153,8 @@ function initiateView(){
                                     "</div>"+
                                     "<div class='ratingsContent'>"+
                                         "<img src='"+location.rating_img_url +"' alt='yelp star rating'>"+
-                                        "<span class='reviewCount'> "+location.review_count+" Yelp reviews</span>"+                                    "</div>"+
-
+                                        "<span class='reviewCount'> "+location.review_count+" Yelp reviews</span>"+
+                                    "</div>"+
                                 "</div>";
             self.infoWindow.setContent(contentString);
         };
