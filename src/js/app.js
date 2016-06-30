@@ -1,5 +1,11 @@
+
+//**********************************
+/* initiateView() wraps the whole page functionality. All functions and variables
+/* are initialized and set up and then ko.applyBindings(new myViewModel) is
+/* called, which will initialize the variables.
+*/
 function initiateView(){
-    var yelp_locations;
+    // pins: will hold some personilized styles for the markers
     var pins = {
         default: {
             pinImage : new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" +
@@ -17,7 +23,7 @@ function initiateView(){
 
         }
     };
-
+    // neighborhoodMap: will hold the Google Maps object
     var neighborhoodMap = function(){
         this.mapDiv = document.getElementById('map');
         this.centerMap = {lat: 43.263224, lng: -2.935003};
@@ -27,8 +33,7 @@ function initiateView(){
             center: this.centerMap
         });
     };
-
-
+    // location: will hold all the data of a specific location
     var Location = function(data){
         this.name = data.name;
         this.lat = parseFloat(data.location.coordinate.latitude);
@@ -40,33 +45,27 @@ function initiateView(){
         this.yelp_rating = data.rating;
         this.review_count = data.review_count;
         this.rating_img_url = data.rating_img_url;
-        this.display = ko.observable(true);
-        this.marker = null;
-        this.active = ko.observable(false);
+        this.display = ko.observable(true); // this will be useful to filter the marker
+        this.marker = null; 
+        this.active = ko.observable(false); // this will be useful to highlight the current marker
     };
 
     var myViewModel = function(){
         var self = this;
-        self.locationsList = ko.observableArray([]);
+        self.yelp_locations; // yelp_location: will hold the from the Yelp Api
+        self.locationsList = ko.observableArray([]); // will hold a list of Location objects (line 37)
         self.myMap = new neighborhoodMap();
         self.currentFilter = ko.observable('');
-
-        var infoWindow = new google.maps.InfoWindow();
-
-        // TO DO: INTEGRATE WITH YELP API
-        /**
+        self.infoWindow = new google.maps.InfoWindow();
+        /** YELP API *************************************************
          * Generates a random number and returns it as a string for OAuthentication
          * @return {string}
          */
         function nonce_generate() {
             return (Math.floor(Math.random() * 1e12).toString());
         }
-
         var YELP_BASE_URL = 'https://api.yelp.com/v2/search?';
-
-
         var yelp_url = YELP_BASE_URL;
-
         var parameters = {
             oauth_consumer_key: 'S8-8TiaPScmVwStuR1GA_Q',
             oauth_token: 'UoA7m1851yaOsFzsbBgQOliMDGSer_Gs',
@@ -81,36 +80,30 @@ function initiateView(){
             sort: 2,
             cll: '43.263224,C-2.935003'
         };
-
         var encodedSignature = oauthSignature.generate('GET',yelp_url, parameters, 'PUadcTDp_9c1DhRD7pkfpE7RDMk', 'otPGzZD-BxowNm7YylVzGVB1CiQ');
         parameters.oauth_signature = encodedSignature;
-
         var settings = {
             url: yelp_url,
             data: parameters,
             cache: true,                // This is crucial to include as well to prevent jQuery from adding on a cache-buster parameter "_=23489489749837", invalidating our oauth-signature
             dataType: 'jsonp',
             success: function(results) {
-              yelp_locations = results.businesses;
+              self.yelp_locations = results.businesses;
               self.init();
             },
-            fail: function() {
-              console.log('failed!!');
+            error: function() {
+                $('body').html('');
+                $('body').append("<h1>There was an error fetching data from Yelp API. Try again later.</h1>");
             }
         };
-
-        // Send AJAX query via jQuery library.
+        /**
+         * Sends ajax request to Yelp Api
+         */
         $.ajax(settings);
-
-        // *******************************
-        // ---------- TO DO: IMPLEMENT GOOGLE MAPS PLACES
-        self.printConsole = function(place, status){
-            // console.log(place);
-        }
-
+        /** GOOGLE PLACES API *************************************************
+         */
         self.service = new google.maps.places.PlacesService(self.myMap.map);
-        
-        self.retrievePlacesDetails = function(results,status, location){
+        self.retrievePlacesDetails = function(results, status, location){
             var request = {
                 placeId: results[0].place_id
             };
@@ -131,78 +124,15 @@ function initiateView(){
                 radius: 2000,
                 keyword: location.name
             }, function(result, status){
-                self.retrievePlacesDetails(result, status, location);
+                self.retrievePlacesDetails(result, status, location); // call function in line 106
             });
 
         };
 
-        // ---------- TO DO: IMPLEMENT GOOGLE MAPS PLACES
-
-        var subscription = self.currentFilter.subscribe(function(newValue){
-            for (var i = 0; i<self.locationsList().length; i++){
-                var locationName = self.locationsList()[i].name.toLowerCase();
-                targetString = newValue.toLowerCase();
-                if (locationName.indexOf(targetString) === -1){
-                    self.locationsList()[i].display(false);
-                }else{
-                    self.locationsList()[i].display(true);                
-                }
-            }
-            self.redrawMarkers();
-        });
-
-        self.init = function(){
-            yelp_locations.forEach(function(locationItem){
-                self.locationsList.push(new Location(locationItem));
-            });
-            self.drawMarkers();
-        };
-
-        self.drawMarkers = function(){
-            for(var i = 0; i< self.locationsList().length; i++){
-                var currentItem = self.locationsList()[i];
-                if (currentItem.display() === true){
-                    self.addMarkerWithAnimation(currentItem, i*100);
-                } else if(currentItem.marker !== null) {
-                    currentItem.marker.setMap(null);
-                }
-            }
-        };
-
-        self.redrawMarkers = function(){
-            for(var i = 0; i< self.locationsList().length; i++){
-                var currentItem = self.locationsList()[i];
-                if (currentItem.display() === true){
-                    currentItem.marker.setMap(self.myMap.map);
-                } else if(currentItem.marker !== null) {
-                    currentItem.marker.setMap(null);
-                }
-            }
-        };
-
-        self.clearMarkers = function(){
-            for(var i = 0; i< self.locationsList().length; i++){
-                var currentItem = self.locationsList()[i];
-                currentItem.marker.setMap(null);
-            }
-        };
-
-        self.addMarkerWithAnimation = function(currentItem, timeout){
-            window.setTimeout(function(){
-                currentItem.marker = new google.maps.Marker({
-                    position: {lat: currentItem.lat, lng: currentItem.lng},
-                    animation: google.maps.Animation.DROP,
-                    icon: pins.default.pinImage,
-                    map: self.myMap.map
-                });
-                currentItem.marker.addListener('click', function(){
-                    self.activateMarker.call(currentItem);
-                });
-            }, timeout);
-        };
-
+        /** SET UP INFOWINDOW **************
+         */
         self.initContent = function(location){
-            self.retrieveInfoGooglePlaces(location);
+            self.retrieveInfoGooglePlaces(location); // call function in line 121
         };
 
         self.prepareInfoWindowContent = function(location){
@@ -227,10 +157,89 @@ function initiateView(){
                                         "<span class='reviewCount'> "+location.review_count+" Yelp reviews</span>"+                                    "</div>"+
 
                                 "</div>";
-            infoWindow.setContent(contentString);
+            self.infoWindow.setContent(contentString);
         };
 
+        /** SET UP MARKERS AND THEIR FUNCTIONALITY *********************************
+         */
+        /**
+         * Populate locationsList and draw markers on map
+         */
+        self.init = function(){
+            self.yelp_locations.forEach(function(locationItem){
+                self.locationsList.push(new Location(locationItem));
+            });
+            self.drawMarkers();
+        };
+        /**
+         * Build an event handler that will filter locations
+         */
+        var subscription = self.currentFilter.subscribe(function(newValue){
+            for (var i = 0; i<self.locationsList().length; i++){
+                var locationName = self.locationsList()[i].name.toLowerCase();
+                targetString = newValue.toLowerCase();
+                (locationName.indexOf(targetString) === -1) ? 
+                    self.locationsList()[i].display(false) :
+                    self.locationsList()[i].display(true);
+            }
+            self.redrawMarkers();
+        });
+        /**
+         * Draw ALL markers on map
+         */
+        self.drawMarkers = function(){
+            for(var i = 0; i< self.locationsList().length; i++){
+                var currentItem = self.locationsList()[i];
+                if (currentItem.display() === true){
+                    self.addMarkerWithAnimation(currentItem, i*100);
+                } else if(currentItem.marker !== null) {
+                    currentItem.marker.setMap(null);
+                }
+            }
+        };
+        /**
+         * Draw markers with display property is set to true
+         */
+        self.redrawMarkers = function(){
+            for(var i = 0; i< self.locationsList().length; i++){
+                var currentItem = self.locationsList()[i];
+                if (currentItem.display() === true){
+                    currentItem.marker.setMap(self.myMap.map);
+                } else if(currentItem.marker !== null) {
+                    currentItem.marker.setMap(null);
+                }
+            }
+        };
+        /**
+         * Remove all markers from map
+         */
+        self.clearMarkers = function(){
+            for(var i = 0; i< self.locationsList().length; i++){
+                var currentItem = self.locationsList()[i];
+                currentItem.marker.setMap(null);
+            }
+        };
+        /**
+         * Will draw marker with animation and add an event listener
+         * to activate the chosen marker
+         */
+        self.addMarkerWithAnimation = function(currentItem, timeout){
+            window.setTimeout(function(){
+                currentItem.marker = new google.maps.Marker({
+                    position: {lat: currentItem.lat, lng: currentItem.lng},
+                    animation: google.maps.Animation.DROP,
+                    icon: pins.default.pinImage,
+                    map: self.myMap.map
+                });
+                currentItem.marker.addListener('click', function(){
+                    self.activateMarker.call(currentItem); // We use .call() to specify the this value of the activateMarker function
+                });
+            }, timeout);
+        };
 
+        /**
+         * Activate marker: change color, bounce, open info window
+         */
         self.activateMarker = function(){
             var marker = this.marker;
             var location = this;
@@ -239,17 +248,22 @@ function initiateView(){
             self.activeColor(marker);
             self.Bounce(marker);
             self.initContent(location);
-            // infoWindow.setContent(location.name);
-            infoWindow.open(self.myMap, marker);
+            self.infoWindow.open(self.myMap, marker);
         };
-
-
-        self.findClickedMarker = function(){
-            console.log(this);
-        }
-
+        /**
+         * Deactivate all markers: change color, bounce, open info window
+         */
+        self.inactiveAll = function(){
+            for(var i = 0; i< self.locationsList().length; i++){
+                var currentItem = self.locationsList()[i];
+                currentItem.active(false);
+                self.defaultColor(currentItem.marker);
+            }
+        };
+        /**
+         * Bounce marker
+         */
         self.Bounce = function(currentMarker){
-            // var self = this;
             if (currentMarker.getAnimation() !== null) {
                 currentMarker.setAnimation(null);
             } else {
@@ -259,23 +273,21 @@ function initiateView(){
                 },700);
             }
         };
-
+        /**
+         * Set "active" icon on current marker
+         */
         self.activeColor = function(currentMarker){
             currentMarker.setIcon(pins.active.pinImage);
         };
-
+        /**
+         * Set "default" icon on current marker
+         */
         self.defaultColor = function(currentMarker){
             currentMarker.setIcon(pins.default.pinImage);
         };
-
-        self.inactiveAll = function(){
-            for(var i = 0; i< self.locationsList().length; i++){
-                var currentItem = self.locationsList()[i];
-                currentItem.active(false);
-                self.defaultColor(currentItem.marker);
-            }
-        };
-
+        /**
+         * Set "default" icon on ALL markers
+         */
         self.defaultColorAll = function(){
             for(var i = 0; i< self.locationsList().length; i++){
                 var currentItem = self.locationsList()[i];
@@ -288,13 +300,21 @@ function initiateView(){
     ko.applyBindings(new myViewModel);
 };
 
+//**********************************
+/* googleSuccess() is the callback function that will run when Google Maps Api
+/* loads.
+/* googleSuccess(): calls the initiateView() function .
+*/
 function googleSuccess(){
     initiateView();
 };
-
+//**********************************
+/* googleError() will run if Google Maps Api does not load properly. It just
+/* displays an error message.
+*/
 function googleError(){
     $('body').html('');
-    $('body').append("<h1>There was an error loading Google Maps. Please try again in 10 hours.</h1>");
+    $('body').append("<h1>There was an error loading Google Maps. Please try again later.</h1>");
 };
 
 
