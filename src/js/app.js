@@ -108,12 +108,11 @@ function initiateView(){
                 placeId: results[0].place_id
             };
             self.service.getDetails(request,function(result,status){
-                location.place_id = result.place_id;
-                location.photos_array = result.photos;
-                location.first_picture_url = result.photos[0].getUrl({'maxHeight': 300, 'maxWidth': 300});
-                location.website = result.website;
-                location.rating = result.rating;
-                console.log(result);
+                location.place_id = result.place_id ? result.place_id : null;
+                location.photos_array = result.photos ? result.photos : null;
+                location.first_picture_url = result.photos ? result.photos[0].getUrl({'maxHeight': 300, 'maxWidth': 300}):null;
+                location.website = result.website ? result.website : '';
+                location.rating = result.rating ? result.rating : 'No rating available';
                 self.prepareInfoWindowContent(location);
             });
         };
@@ -136,7 +135,7 @@ function initiateView(){
         };
 
         self.prepareInfoWindowContent = function(location){
-            var pictureString = "<iframe width='300' height='auto' frameborder='0' src='"+location.first_picture_url+"'></iframe>";
+            var pictureString = location.first_picture_url ? "<iframe width='300' height='auto' frameborder='0' src='"+location.first_picture_url+"'></iframe>": '';
             var contentString = "<div class='infoWin'>" +
                                     "<div class='imageContent'>"+
                                         pictureString +
