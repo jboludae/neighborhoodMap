@@ -79,14 +79,3 @@ gulp.task('lint', function(){
     // lint error, return the stream and pipe to failOnError last.
     .pipe(eslint.failOnError());
 });
-
-// Browser-sync server
-// gulp.task('serve', function() {
-//     browserSync.init({
-//         server: {
-//             baseDir: './src'
-//         }
-//     });
-//     gulp.watch('src/scss/**/*.scss',['sass']);
-//     gulp.watch('src/*.html').on('change',browserSync.reload);
-// });
