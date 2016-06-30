@@ -12,17 +12,24 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <div class="container">
-        <div class="search_bar">
-            <input type="text" class="filter" placeholder="Filter pintxos bars..." data-bind="textInput: currentFilter">
+    <div class="navigation_list">
+        <div class="nav">
+            <button data-bind="click: toggleMenu" type="button" class="btn btn-default" aria-label="Left Align">
+                <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+            </button>
         </div>
-        <div class="list">
-            <ul data-bind="foreach: locationsList">
-                <li data-bind="text: $data.name, visible: $data.display() === true, css: {selected: $data.active() === true}, click: $root.activateMarker"></li>
-            </ul>
+        <div class = "col">
+            <div class="search_bar">
+                <input type="text" class="filter" placeholder="Filter pintxos bars..." data-bind="textInput: currentFilter">
+            </div>
+            <div class="list">
+                <ul data-bind="foreach: locationsList">
+                    <li data-bind="text: $data.name, visible: $data.display() === true, css: {selected: $data.active() === true}, click: $root.activateMarker"></li>
+                </ul>
+            </div>
         </div>
-        <div class="map" id="map"></div>
     </div>
+    <div class="map" id="map"></div>
     <!-- JS Scripts -->
     <script src='../bower_components/jquery/dist/jquery.min.js'></script>
     <script src='../bower_components/bootstrap/dist/js/bootstrap.min.js'></script>

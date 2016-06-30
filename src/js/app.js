@@ -293,8 +293,12 @@ function initiateView(){
                 self.defaultColor(currentItem.marker);
             }
         };
-    };
 
+        self.toggleMenu = function(){
+            var container_element = $(".navigation_list");
+            container_element.hasClass("slide") ? container_element.removeClass("slide") : container_element.addClass("slide");
+        };
+    };
 
     ko.applyBindings(new myViewModel);
 };
