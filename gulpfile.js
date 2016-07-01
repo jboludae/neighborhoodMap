@@ -10,7 +10,7 @@ var rename = require('gulp-rename');
 var eslint = require('gulp-eslint');
 var sourcemaps = require('gulp-sourcemaps');
 
-gulp.task('default',['copy-html','sass','scripts'], function(){
+gulp.task('default',['copy-html','sass','scripts','bower'], function(){
     gulp.watch('src/index.html', ['copy-html']);
     gulp.watch('src/scss/**/*.scss',['sass']);
     gulp.watch('src/js/**/*.js',['scripts']);
@@ -64,6 +64,14 @@ gulp.task('scripts-prod', function(){
     .pipe(concat('all.js'))
     .pipe(uglify())
     .pipe(gulp.dest('dist/js/'));
+});
+
+// We copy bower components
+
+gulp.task('bower', function(){
+    gulp.src(['bower_components/**/*'])
+    .pipe(gulp.dest('dist/bower_components'));
+
 });
 
 // Set up eslint
