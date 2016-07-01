@@ -1,23 +1,30 @@
 body {
     font-family: Roboto, sans-serif;
 }
+
+
 input {
     width: 220px;
 }
-.navigation_list{
+
+
+.navigation-list {
     float: right;
     width: 300px;
     padding: 5px 5px 0 0;
     display: flex;
 }
 
-.search_bar{
+
+.search-bar {
     width: 250px;
 }
+
 
 .glyphicon {
     font-size: 22px;
 }
+
 
 .btn {
     border-radius: 3px;
@@ -35,6 +42,7 @@ input {
         }
 }
 
+
 .list {
     width: 250px;
     background-color: rgba(255,255,255, 0.8);
@@ -46,24 +54,27 @@ input {
         padding-left: 3px;
         &:hover,
         &:active,
-        &:focus{
+        &:focus {
             background-color: rgba(0,0,0, 0.15);
         }
     }
-    ul{
+    ul {
         padding: 10px;
     }
 }
 
-.selected{
+
+.selected {
     background-color: rgba(0,0,0, 0.30);
     font-weight: bold;
 }
+
 
 .infoData {
     list-style: none;
     padding: 0;
 }
+
 
 .filter {
     border: 0;
@@ -79,6 +90,19 @@ input {
     }
 }
 
+
+.navigation-list {
+    transform: translate3d(0, 0, 0);
+    transition: transform 0.5px;
+}
+
+
+.slide .navigation-list {
+    transform: translate3d(250px, 0, 0);
+    transition: transform 0.5s;   
+}
+
+
 #map {
     position: absolute;
     top: 0;
@@ -87,13 +111,3 @@ input {
     width: 100vw;
     z-index: -1;
 };
-
-.navigation_list{
-    transform: translate3d(0, 0, 0);
-    transition: transform 0.5px;
-}
-
-.slide .navigation_list{
-    transform: translate3d(250px, 0, 0);
-    transition: transform 0.5s;   
-}

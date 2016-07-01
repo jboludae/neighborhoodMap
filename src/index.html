@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-Compatible" content="ie=edge">
     <!-- Consider implementing the following line -->
     <!-- <meta name="viewport" content="initial-scale=1.0, user-scalable=no" /> -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,15 +11,15 @@
     <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="slide">
-    <div class="navigation_list">
-        <div class="nav">
+<body data-bind="css: {slide: menuVisible() === false}">
+    <section class="navigation-list">
+        <nav class="nav">
             <button data-bind="click: toggleMenu" type="button" class="btn btn-default" aria-label="Left Align">
                 <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
             </button>
-        </div>
-        <div class = "col">
-            <div class="search_bar">
+        </nav>
+        <aside class = "col">
+            <div class="search-bar">
                 <input type="text" class="filter" placeholder="Filter pintxos bars..." data-bind="textInput: currentFilter">
             </div>
             <div class="list">
@@ -27,10 +27,11 @@
                     <li data-bind="text: $data.name, visible: $data.display() === true, css: {selected: $data.active() === true}, click: $root.activateMarker"></li>
                 </ul>
             </div>
-        </div>
-    </div>
+        </aside>
+    </section>
     <div class="map" id="map"></div>
     <!-- JS Scripts -->
+    <script src="https://use.fontawesome.com/a56b35e481.js"></script>
     <script src='../bower_components/jquery/dist/jquery.min.js'></script>
     <script src='../bower_components/bootstrap/dist/js/bootstrap.min.js'></script>
     <script src='../bower_components/knockout/dist/knockout.js'></script>
