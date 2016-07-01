@@ -231,6 +231,8 @@ function initiateView(){
             if (window.innerWidth < 800) {
                 self.menuVisible(false);
             }
+            // TO REVIEWER: INFO WINDOWS GO OUT OF THE SCREEN IN SMALL DEVICES
+            // HOW CAN I FIX THIS.
             self.myMap.map.panTo(marker.getPosition());
             self.infoWindow.setContent('<i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i><span class="sr-only">Loading...</span>');
             self.infoWindow.open(self.myMap, marker);
